@@ -40,6 +40,17 @@ def ensure_git_dir(root_dir):
     git_dir = os.path.join(root_dir, '.git')
     if not os.path.exists(git_dir):
         run_git_subprocess(['init'])
+    else:
+        if not is_git_clean():
+            raise RuntimeError('Git repository is not clean. Please commit or stash your changes.')
+
+
+def is_git_clean():
+    try:
+        run_git_subprocess(['diff-index', '--exit-code', 'HEAD'], hide_stderr=True)
+        return True
+    except subprocess.CalledProcessError:
+        return False
 
 
 def extract_repo_manifest(root_dir, args):
