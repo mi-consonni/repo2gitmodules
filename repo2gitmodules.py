@@ -43,6 +43,9 @@ def ensure_git_dir(root_dir):
     else:
         if not is_git_clean():
             raise RuntimeError('Git repository is not clean. Please commit or stash your changes.')
+    # Also ensure that all submodules are initialized,
+    # otherwise subsequent calls to `git submodule status` will fail.
+    run_git_subprocess(['submodule', 'update', '--init', '--recursive'])
 
 
 def is_git_clean():
